@@ -2,7 +2,7 @@
 $answers = [
 	'Liked',
 	'Would Like to Watch',
-	'Not Interested in Watching',
+	'No Plans to Watch',
 	'Disliked',
 ];
 function GetDBContext() 
