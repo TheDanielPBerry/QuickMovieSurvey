@@ -61,8 +61,10 @@ function GetSurvey($db, $email)
 }
 function CreateSurvey($db, $email)
 {
-	$stmt = $db->prepare("INSERT INTO survey (email) VALUES (:email)");
+	$ip_addr = $_SERVER['REMOTE_ADDR'];
+	$stmt = $db->prepare("INSERT INTO survey (email, ip_address) VALUES (:email, :ip_addr)");
 	$stmt->bindParam(':email', $email);
+	$stmt->bindParam(':ip_addr', $ip_addr);
 	if($result = $stmt->execute()) {
 		return GetSurvey($db, $email);
 	}
