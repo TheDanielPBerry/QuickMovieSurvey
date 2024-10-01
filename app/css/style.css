@@ -1,0 +1,75 @@
+body {
+
+}
+label[for=email] {
+	font-size: 1.4em;
+	margin-top: 0.2em;
+}
+input[type=email] {
+	margin-left: 1em;
+	width: 500px;
+	font-size: 1.4em;
+	padding: 0.2em;
+}
+.form-group {
+	margin: 2em;
+}
+.error {
+	width: 80%;
+	color: white;
+	background-color: #d11;
+	font-size: 1.2em;
+	margin: 1em;
+	padding: 0.5em;
+}
+.text-center {
+	text-align: center;
+}
+h4 {
+	margin-bottom: 0em;
+}
+.flex-container {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+}
+label[for|=ans] {
+	padding: 1em;
+	border-radius: 0.2em;
+	border: 1px solid #ccc;
+	margin-top: 0.2em;
+	margin-bottom: 1em;
+	margin-left: 0em;
+	margin-right: 2em;
+	cursor: pointer;
+}
+
+button[type=submit] {
+	background-color: #888;
+	color: white;
+	border-radius: 0.2em;
+	font-size: 1.4em;
+	padding: 0.5em 1em;
+	border: 0px;
+	cursor: pointer;
+	margin-bottom: 4em;
+	margin-left: 2em;
+}
+
+@media (max-width: 768px) {
+	h4 {
+		margin-bottom: 0.5em;
+	}
+	input[type=email] {
+		margin-left: 0px;
+		width: 100%;
+	}
+	.flex-container {
+		flex-direction: column;
+	}
+	.flex-container label {
+		margin-top: 0px;
+		margin-bottom: 0.2em;
+		margin-right: 0em;
+	}
+}
