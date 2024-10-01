@@ -7,7 +7,7 @@ $answers = [
 ];
 function GetDBContext() 
 {
-	$db = new SQLite3('survey.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
+	$db = new SQLite3('../db/survey.db', SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
 	$db->enableExceptions();
 	return $db;
 }

@@ -9,6 +9,7 @@ services:
       dockerfile: Dockerfile
     volumes: 
       - ./app:/var/www/html
+      - ./db:/var/www/db
     ports: 
       - 80:80
       - 443:443
