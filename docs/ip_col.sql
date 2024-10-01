@@ -1,2 +1,2 @@
-ALTER TABLE survey ADD test TEXT;
+ALTER TABLE survey ADD ip_address TEXT;
 
