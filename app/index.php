@@ -13,27 +13,30 @@ function GetDBContext()
 }
 function GetSurveyQuestions($db)
 {
-	$result = $db->query("SELECT id, title FROM movie;");
-	if($result) {
-		$return = [];
+	global $seed;
+
+	$sql = "SELECT id, title FROM movie ORDER BY id;";
+	$stmt = $db->prepare($sql);
+	$return = [];
+	if($result = $stmt->execute()) {
 		while($row = $result->fetchArray(SQLITE3_ASSOC)) {
-			$return[$row['id']] = $row['title'];
+			$return[] = $row;
 		}
-		return $return;
+
+		srand($seed);
+		//Shuffle the movie using the generated seed
+		uasort($return, fn($l,$r) => rand()%2 == 0 ? -1 : 1);
+		$return = array_combine(array_column($return, 'id'), array_column($return, 'title'));
+		$return = array_slice($return, 0, 70, true);
 	}
+
+
+	return $return;
 }
-function ValidateMovieRatings($ratings)
+
+function ValidateMovieRatingValues($ratings)
 {
 	global $answers;
-	if(empty($ratings)) {
-		return "No ratings submitted";
-	}
-	if(!is_array($ratings)) {
-		return "Ratings input must be an array";
-	}
-	if(count($ratings) < 50) {
-		return "Please rate at least 50 movies before submitting";
-	}
 	foreach($ratings as $movieId => $rating) {
 		if(!is_numeric($movieId) || intval($movieId) < 0 || intval($movieId) > 101) {
 			return "Invalid movie '$movieId' in ratings";
@@ -43,6 +46,19 @@ function ValidateMovieRatings($ratings)
 		}
 	}
 	return false;
+}
+function ValidateMovieRatings($ratings)
+{
+	if(empty($ratings)) {
+		return "No ratings submitted";
+	}
+	if(!is_array($ratings)) {
+		return "Ratings input must be an array";
+	}
+	if(count($ratings) < 50) {
+		return "Please rate at least 50 movies before submitting";
+	}
+	return ValidateMovieRatingValues($ratings);
 }
 function ValidateEmail($email) {
 	if(empty($email) || preg_match("/^\S+\@(\S+\.)+\S{2,4}$/", $email) === 0) {
@@ -90,6 +106,8 @@ function DeleteRatings($db, $surveyId, $ratings)
 }
 
 $errors = [];
+$seed = $_COOKIE['seed'] ?? $_POST['seed'] ?? rand();
+setcookie("seed", $seed);
 $db = GetDBContext();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -136,8 +154,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	}
 }
 
-if(!empty($errors) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+if($_SERVER['REQUEST_METHOD'] !== 'POST') {
 	$movies = GetSurveyQuestions($db);
+} else if(!empty($errors)) {
+	$movies = GetSurveyQuestions($db, $seed ?? null);
 }
 ?>
 
@@ -164,15 +184,17 @@ if(!empty($errors) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
 			</div>
 		<? } ?>
 		<form action="/" method="POST">
+			<input type="hidden" name="seed" value="<?=$seed ?>" />
 			<div class="flex-container form-group">
 				<label for="email">*Email: </label>
 				<input type="email" id="email" name="email" placeholder="josephdirt@clemson.edu" value="<?=$_POST['email'] ?? '' ?>" />
 			</div>
+			<? $rowCount = 1; ?>
 			<? foreach($movies as $movieIndex => $movie) { ?>
 				<hr/>
 				<div class="form-group">
 					<h4>
-						<?=$movieIndex ?>. <?=$movie ?>
+						<?=strval($rowCount++) ?>. <?=$movie ?>
 					</h4>
 					<div class="flex-container">
 						<? foreach($answers as $answerIndex => $answer) { 
